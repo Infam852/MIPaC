@@ -1,0 +1,62 @@
+.header{
+  text-align: center;
+  margin: auto;
+  padding: 20px;
+}
+
+.info{
+  width: 70%;
+  margin: auto;
+  padding: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.video{
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+
+}
+
+.center{
+  width: 70%;
+  margin: auto;
+  text-align: center;
+  padding: 10px;
+}
+
+.sm-margin{
+  padding: 5px;
+  margin: 2px;
+}
+
+.url {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+    margin: .5rem;
+}
+
+.content
+{
+  width: 70%;
+  margin: auto;
+}
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.inline{
+  display: inline-block;
+  margin: 2;
+}
+
+body{
+  background-color: #f5f5f5;
+}

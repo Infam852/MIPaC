@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
+    <title>MIPaC</title>
+  </head>
+  <body>
+    <main role="main" class="container">
+      <div class="header">
+          <h1>MIPaC microproject</h1>
+      </div>
+      <div class="info">
+        <div class="content-section">
+            <label for="url">URL:</label>
+            <!-- <input type="text" class="form-control" id="url" placeholder="Enter your URL"> -->
+
+            <div class="input-group mb-3">
+              <input id="inputURL" type="text" class="form-control" placeholder="Enter your URL" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="load_video()">Load</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlSelect1">Select predifined video</label>
+              <select class="form-control" id="selectVideo" onchange="load_video_select(this)">
+                <option value="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">video 1</option>
+                <option value="https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8">video 2</option>
+                <option value="http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8">video 3</option>
+              </select>
+            </div>
+        </div>
+        <!-- CONTENT SECTION -->
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Dimension
+            <select onchange="change_dim(this.value)">
+              <option>720</option>
+              <option>480</option>
+              <option>320</option>
+            </select>
+          </li>
+        </ul>
+      </div>
+      <div class="video">
+        <video id="video" width="720" controls></video>
+      </div>
+      <div class="center content-section" style="display: block;">
+        <div style="padding:10px;">
+          <h3>Settings</h4>
+        </div>
+
+        <!-- QUALITY LEVEL -->
+        <table class="table table-sm">
+          <tbody>
+            <td>Current level</td>
+            <td>
+              <div id="btns" style="display: inline;">
+            
+              </div>
+            </td>
+          </tbody>
+        </table>
+      </div>
+      <!-- STATISTICS -->
+      <div class="center content-section">
+        <div class="">
+          <h3>Statistics</h3>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              bitrate
+              <span id="bitrate" class="badge badge-primary badge-pill">14</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              width
+              <span id="width" class="badge badge-primary badge-pill">1</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              height
+              <span id="height" class="badge badge-primary badge-pill">1</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              audio codec
+              <span id="audio codec" class="badge badge-primary badge-pill">2</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              video codec
+              <span id="video codec" class="badge badge-primary badge-pill">2</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="form-group content">
+        <div class="m-2">
+          <label for="logsLabel" class="inline">Processed fragements</label>
+          <button type="button" class="btn btn-sm btn-danger inline " onclick="clear2()" style="float: right;" name="button">Clear</button>
+        </div>
+        <textarea class="form-control rounded-0" id="logs" rows="10" readonly></textarea>
+      </div>
+
+      <footer class="page-footer font-small blue">
+
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">© 2020 Copyright:
+          <a href="https://www.agh.edu.pl//">AGH</a>
+        </div>
+        <!-- Copyright -->
+
+      </footer>
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+      if (Hls.isSupported()) {
+        var video = document.getElementById('video');
+        var hls = new Hls();
+        // bind them together
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          console.log("video and hls.js are now bound together !");
+          hls.loadSource("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8");
+          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+            console.log("manifest loaded, found " + data.levels.length + " quality level");
+            // change to auto quality
+            change_quality(-1)
+            console.log(hls);
+            set_levels();
+          });
+          hls.on(Hls.Events.FRAG_CHANGED, onLevelLoaded);
+        });
+      }
+
+      clear2();
+
+      function clear2(){
+        document.getElementById('logs').value = "";
+      }
+
+      function onLevelLoaded(event, data){
+        console.log(data)
+        console.log(data.frag._url)
+        var text =  "Duration: " + data.frag.duration + "\n" + data.frag._url + "\n";
+        document.getElementById('logs').value += text;
+      }
+
+      function load_video(){
+        if (Hls.isSupported()) {
+          var video = document.getElementById('video');
+          // bind them together
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+
+            var url = document.getElementById("inputURL").value;
+            console.log(url);
+            hls.loadSource(url);
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+              // console.log("manifest loaded, found " + data.levels.length + " quality level");
+              // change to auto quality
+              change_quality(-1)
+              console.log(hls.levelDetails);
+              // console.log(hls.levels);
+            });
+          });
+        }
+      }
+
+      function set_levels(){
+          console.log(hls.levels.length);
+          // add auto button
+          var btnGroup = document.getElementById("btns");
+          btnGroup.innerHTML = "";
+          var button = document.createElement("button");
+          button.innerHTML = "auto";
+          button.className += "btn btn-sm btn-success m-1";
+          button.onclick = function() { change_quality(-1); };
+          btnGroup.appendChild(button);
+
+          // add all other bitrates
+          for (var i = 0; i < hls.levels.length; i++){
+            var button = document.createElement("button");
+            button.innerHTML = i + " (" + hls.levels[i].bitrate + ")";
+            button.className += "btn btn-sm btn-success m-1";
+            console.log(button);
+            button.setAttribute("onclick", "change_quality("+i+");");
+            btnGroup.appendChild(button);
+          }
+
+      }
+
+      function load_video_select(sel){
+        if (Hls.isSupported()) {
+          var video = document.getElementById('video');
+          // bind them together
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+
+            var url = sel.options[sel.selectedIndex].value;
+            console.log(url);
+            hls.loadSource(url);
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+              console.log("manifest loaded, found " + data.levels.length + " quality level");
+              // change to auto quality
+              change_quality(-1)
+
+            });
+          });
+        }
+      }
+
+      function change_dim(dim){
+        document.getElementById("video").width=dim;
+      }
+
+      function change_quality(qualityLevel){
+        // console.log(qualityLevel);
+        hls.currentLevel=qualityLevel;
+        setInterval(function(){adjust_sats()}, 1000);
+      }
+
+      function adjust_sats(){
+        // console.log(hls.levels)
+        // console.log(hls.currentLevel);
+        document.getElementById("bitrate").innerHTML = hls.levels[hls.currentLevel].bitrate;
+        document.getElementById("width").innerHTML = hls.levels[hls.currentLevel].width;
+        document.getElementById("height").innerHTML = hls.levels[hls.currentLevel].height;
+        document.getElementById("audio codec").innerHTML = hls.levels[hls.currentLevel].audioCodec;
+        document.getElementById("video codec").innerHTML = hls.levels[hls.currentLevel].videoCodec;
+      }
+
+      // error handling
+      hls.on(Hls.Events.ERROR, function (event, data) {
+        if (data.fatal) {
+          switch(data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+          // try to recover network error
+            console.log("fatal network error encountered, try to recover");
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.log("fatal media error encountered, try to recover");
+            hls.recoverMediaError();
+            break;
+          default:
+          // cannot recover
+            console.log("fatal media error encountered, cannot recover");
+            hls.destroy();
+            break;
+          }
+        }
+      });
+    </script>
+
+  </body>
+</html>
